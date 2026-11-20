@@ -29,10 +29,9 @@ const build = async () => {
     await fs.mkdir(targetDirectory);
 
     // copy src folder
-    await fs.cp(sourceDirectory, targetDirectory, { recursive: true }, (err) => {
-        if (err)
-            console.error(err);
-    });
+    // Copy the source directory and wait until it finishes.
+await fs.cp(sourceDirectory, targetDirectory, { recursive: true });
+
 
     // copy html file
     await fs.copyFile(path.join(rootDirectory, htmlFile), path.join(targetDirectory, htmlFile));
@@ -50,8 +49,9 @@ const build = async () => {
 
     // remove basePath from source directory
     const basePath = `${path.basename(sourceDirectory)}/`;
-    const re = new RegExp(basePath, "g");
-    html = html.replace(re, "");
+    
+    html = html.split(basePath).join(""); // Remove literal occurrences of basePath.
+
 
     // write html files
     await fs.writeFile(`${targetDirectory}/${htmlFile}`, html);
